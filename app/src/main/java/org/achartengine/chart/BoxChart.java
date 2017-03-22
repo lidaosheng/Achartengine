@@ -224,6 +224,32 @@ public class BoxChart extends AbstractChart{
 //                xPixelsPerUnit, minX, maxX);
     }
 
+    protected void drawYLabels(Canvas canvas, Paint paint,
+                               int left, int bottom, double yPixelsPerUnit, double minY,double maxY) {
+        boolean showYLabels = mRenderer.isShowYLabels();
+        boolean showTickMarks = mRenderer.isShowTickMarks();
+        paint.setTextAlign(mRenderer.getYLabelsAlign(0)); //设置yLabel对齐方式
+        int length = 10; //设置十个标签，后面可以放到渲染器中
+        double height_real = (maxY-minY)*getScaleForY(); //real height(不是屏幕height)
+        //------------------------------------绘制刻度，以及下标---------------------------------------------------------------------------------------
+        for (int j = 1; j < length+1; j++) {
+            double label = j*height_real/10; //获取第j个yLabel
+            boolean textLabel = mRenderer.getYTextLabel(label, 0) != null;//文字标签是否不为空
+            float yLabel = (float) (bottom - yPixelsPerUnit * (label - 0)); //由具体数值转化为屏幕上的位置
+            //------------------------------------绘制标签（如果没有文字标签）------------------------------------------
+            if (showYLabels && !textLabel) {
+                if (showTickMarks) {
+                    canvas.drawLine(left - 4, yLabel, left, yLabel, paint); //绘制刻度，长度为4，根据axisAlign决定绘制在y轴左边还是右边
+                }
+                drawText(canvas, getLabel(mRenderer.getYLabelFormat(0), label),//绘制的是数字
+                        left - mRenderer.getYLabelsPadding(),
+                        yLabel - mRenderer.getYLabelsVerticalPadding(), paint,
+                        mRenderer.getYLabelsAngle());
+            }
+        }
+    }
+
+
     protected void drawText(Canvas canvas, String text, float x, float y, Paint paint,
                             float extraAngle) {
         float angle = -mRenderer.getOrientation().getAngle() + extraAngle;
