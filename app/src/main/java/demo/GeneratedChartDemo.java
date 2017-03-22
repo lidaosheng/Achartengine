@@ -179,8 +179,17 @@ public class GeneratedChartDemo extends ListActivity {
     series.add(new double[]{12.0, 45.9, 40.00, 22.05});
     BoxSeries series1 = new BoxSeries("第二个box");
     series1.add(new double[]{10.0, 55.9, 40.00, 69.05,55});
+    BoxSeries series2 = new BoxSeries("第三个box");
+    series2.add(new double[]{30.0, 44.9, 40.00, 39.05,25});
+    BoxSeries series3 = new BoxSeries("第四个box");
+    series3.add(new double[]{11.0, 34.9, 50.00, 49.05,35});
+    BoxSeries series4 = new BoxSeries("第五个box");
+    series4.add(new double[]{41.0, 14.9, 20.00, 39.05,15});
     dataset.addSeries(series);
     dataset.addSeries(series1);
+    dataset.addSeries(series2);
+    dataset.addSeries(series3);
+    dataset.addSeries(series4);
     return dataset;
   }
 

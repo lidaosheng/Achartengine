@@ -1,18 +1,14 @@
 package org.achartengine.model;
 
-import android.util.Log;
 
 import org.achartengine.util.MathHelper;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by lifei on 2017/3/10.
- */
+
 public class BoxSeries implements Serializable{
     private String mTitle;
     private List<Double> mValues = new ArrayList<Double>();
@@ -40,9 +36,8 @@ public class BoxSeries implements Serializable{
      * @return the statistics
      */
     public Map<String,Double> getStatistics(){
-        Map<String,Double> stat = new HashMap<String,Double>();
+        Map<String,Double> stat;
         stat = MathHelper.getStatistics(this.mValues);
-        System.out.println("怎么越界了，this.mValue---------:"+this.mValues);
         return stat;
     }
 }

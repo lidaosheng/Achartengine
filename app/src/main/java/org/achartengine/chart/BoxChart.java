@@ -5,21 +5,16 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.Rect;
-
 import org.achartengine.model.BoxMultipleSeriesDataset;
 import org.achartengine.model.BoxSeries;
 import org.achartengine.renderer.DefaultRenderer;
 import org.achartengine.renderer.SimpleSeriesRenderer;
 import org.achartengine.renderer.XYMultipleSeriesRenderer;
-import org.achartengine.renderer.XYSeriesRenderer;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by lifei on 2017/2/27.
- */
+
 public class BoxChart extends AbstractChart{
     /** The multiple series dataset. */
     protected BoxMultipleSeriesDataset mDataset;
@@ -81,7 +76,6 @@ public class BoxChart extends AbstractChart{
         float yPixelsPerUnit=0;
         //更新上面的minY，maxY等
         for (int i = 0; i < sLength; i++) {
-            System.out.println("-------------------------怎么越界sLenght："+sLength);
             BoxSeries series = mDataset.getSeriesAt(i); //获取第i个series数据
             Map<String,Double> stat = series.getStatistics();
             if (series.getItemCount() == 0) { //如果当前series中没数据，跳过这次循环
@@ -121,17 +115,17 @@ public class BoxChart extends AbstractChart{
                 float Q1 = (float)stat.get("Q1").doubleValue();
                 float Q2 = (float)stat.get("Q2").doubleValue();
                 float Q3 = (float)stat.get("Q3").doubleValue();
-                float min1 = (float)(bottom - (min-0)*yPixelsPerUnit);
-                float max1 = (float)(bottom - (max-0)*yPixelsPerUnit);
-                float Q11 = (float)(bottom - (Q1-0)*yPixelsPerUnit);
-                float Q21 = (float)(bottom - (Q2-0)*yPixelsPerUnit);
-                float Q31 = (float)(bottom - (Q3-0)*yPixelsPerUnit);
+                float min1 = bottom - (min-0)*yPixelsPerUnit;
+                float max1 = bottom - (max-0)*yPixelsPerUnit;
+                float Q11 = bottom - (Q1-0)*yPixelsPerUnit;
+                float Q21 = bottom - (Q2-0)*yPixelsPerUnit;
+                float Q31 = bottom - (Q3-0)*yPixelsPerUnit;
                 float startX = left + (i+1) * xPixelsPerUnit ;//box的X点坐标
-                drawSeries(canvas, paint,startX, min1,max1,Q11,Q21,Q31, null, yAxisValue);
-                //sss
+                drawSeries(canvas, paint,width,startX, min1,max1,Q11,Q21,Q31, null, yAxisValue);
 
             }
         }
+
 
 
 
@@ -146,10 +140,13 @@ public class BoxChart extends AbstractChart{
         canvas.drawLine(left, bottom, right, bottom, paint);
         paint.setColor(Color.BLUE);
         canvas.drawLine(left, top, left, bottom, paint);
+        //绘制刻度和标签
+        drawXLabels(canvas,paint,left,bottom,xPixelsPerUnit);
+
     }
     //保证最高的那个box不会填充整个Y,缩放倍数
     private float getScaleForY() {
-        return 2;
+        return 1.5f;
     }
 
 
@@ -159,10 +156,10 @@ public class BoxChart extends AbstractChart{
      * @param seriesRenderer the series renderer
      * @param yAxisValue the minimum value of the y axis
      */
-    public void drawSeries(Canvas canvas,Paint paint,float startX,float min,float max,float Q1,float Q2,float Q3,
+    public void drawSeries(Canvas canvas,Paint paint,int width,float startX,float min,float max,float Q1,float Q2,float Q3,
                            XYMultipleSeriesRenderer seriesRenderer,float yAxisValue) {
         paint.setStyle(Style.FILL);
-        drawBox(canvas,startX,min,max,Q1,Q2,Q3,yAxisValue, getHalfDiffX(), paint);
+        drawBox(canvas,startX,min,max,Q1,Q2,Q3,yAxisValue, getHalfDiffX(width), paint);
     }
 
     public XYMultipleSeriesRenderer getRenderer() {
@@ -186,8 +183,6 @@ public class BoxChart extends AbstractChart{
     }
 
 
-
-
     @Override
     public int getLegendShapeWidth(int seriesIndex) {
         return 0;
@@ -197,40 +192,51 @@ public class BoxChart extends AbstractChart{
     public void drawLegendShape(Canvas canvas, SimpleSeriesRenderer renderer, float x, float y, int seriesIndex, Paint paint) {
     }
 
-
     /**
      * get half of the box width
      * @return
      */
-    private float getHalfDiffX() {
-        return 10; //如果设置了bar之间的间距的话
+    private float getHalfDiffX(int width) {
+        int seriesNr = mDataset.getSeriesCount();
+        float halfDiffX = width/(2*(seriesNr+1));
+        return Math.min(10,halfDiffX);
     }
 
-    /**
-     *
-     * @param realPoint
-     * @param scale
-     * @return
-     */
-//    public double[] toScreenPoint(double[] realPoint, int scale) {
-//        double realMinX = mRenderer.getXAxisMin(scale); //获取当前缩放比例下的X轴最小值
-//        double realMaxX = mRenderer.getXAxisMax(scale);
-//        double realMinY = mRenderer.getYAxisMin(scale);
-//        double realMaxY = mRenderer.getYAxisMax(scale);
-//        if (!mRenderer.isMinXSet(scale) || !mRenderer.isMaxXSet(scale) || !mRenderer.isMinYSet(scale)
-//                || !mRenderer.isMaxYSet(scale)) {
-//            double[] calcRange = getCalcRange(scale);
-//            realMinX = calcRange[0];
-//            realMaxX = calcRange[1];
-//            realMinY = calcRange[2];
-//            realMaxY = calcRange[3];
-//        }
-//        if (mScreenR != null) {
-//            return new double[] {
-//                    (realPoint[0] - realMinX) * mScreenR.width() / (realMaxX - realMinX) + mScreenR.left,
-//                    (realMaxY - realPoint[1]) * mScreenR.height() / (realMaxY - realMinY) + mScreenR.top };
-//        } else {
-//            return realPoint;
-//        }
-//    }
+    protected void drawXLabels(Canvas canvas,
+                               Paint paint, int left, int bottom, double xPixelsPerUnit) {
+        int seriesNr = mDataset.getSeriesCount();
+        boolean showXLabels = mRenderer.isShowXLabels();
+        boolean showTickMarks = mRenderer.isShowTickMarks();
+        for (int i = 0; i < seriesNr; i++) {
+            String title = mDataset.getSeriesAt(i).getmTitle(); //x文字标签
+            float startX = (float)(left + (i+1) * xPixelsPerUnit);
+            if (showXLabels) {//如果显示X标签
+                paint.setColor(mRenderer.getXLabelsColor());
+                if (showTickMarks) { //如果显示刻度
+                    canvas.drawLine(startX, bottom, startX, bottom + mRenderer.getLabelsTextSize() / 3, paint);//刻度长度为text/3=3.3
+                }
+                drawText(canvas, title, startX,
+                        bottom + mRenderer.getLabelsTextSize() * 4 / 3 + mRenderer.getXLabelsPadding(), paint,
+                        45);
+            }
+        }
+//        drawXTextLabels(xTextLabelLocations, canvas, paint, showXLabels, left, top, bottom,
+//                xPixelsPerUnit, minX, maxX);
+    }
+
+    protected void drawText(Canvas canvas, String text, float x, float y, Paint paint,
+                            float extraAngle) {
+        float angle = -mRenderer.getOrientation().getAngle() + extraAngle;
+        if (angle != 0) {
+            // canvas.scale(1 / mScale, mScale);
+            canvas.rotate(angle, x, y);
+        }
+        drawString(canvas, text, x, y, paint);
+        if (angle != 0) {
+            canvas.rotate(-angle, x, y);
+            // canvas.scale(mScale, 1 / mScale);
+        }
+    }
+
+
 }
