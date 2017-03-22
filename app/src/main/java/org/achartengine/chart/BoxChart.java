@@ -149,7 +149,7 @@ public class BoxChart extends AbstractChart{
     }
     //保证最高的那个box不会填充整个Y,缩放倍数
     private float getScaleForY() {
-        return 3;
+        return 2;
     }
 
 
@@ -173,12 +173,16 @@ public class BoxChart extends AbstractChart{
     private void drawBox(Canvas canvas,float startX,float min,float max,float Q1,float Q2,float Q3, float yAxisValue, float halfDiffX, Paint paint) {
 //        float startX = xMin - seriesNr * halfDiffX + seriesIndex * 2 * halfDiffX; //
 //        drawBox(canvas, startX, yMax, startX + 2 * halfDiffX, yMin, scale, seriesIndex, paint); //(canvas,
+        int orginColor = paint.getColor();
+        paint.setColor(Color.rgb(164,201,95));
         canvas.drawLine(startX-halfDiffX,max,startX+halfDiffX,max,paint); //胡须上
         canvas.drawLine(startX,max,startX,Q3,paint);
         canvas.drawLine(startX-halfDiffX,min,startX+halfDiffX,min,paint); //胡须下
         canvas.drawLine(startX,min,startX,Q1,paint);
         canvas.drawRect(startX-halfDiffX, Q3, startX+halfDiffX, Q1, paint); //盒子
+        paint.setColor(Color.WHITE);
         canvas.drawLine(startX-halfDiffX,Q2,startX+halfDiffX,Q2,paint); //中位线
+        paint.setColor(orginColor);
     }
 
 
