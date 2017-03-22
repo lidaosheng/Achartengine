@@ -176,8 +176,11 @@ public class GeneratedChartDemo extends ListActivity {
     BoxMultipleSeriesDataset dataset = new BoxMultipleSeriesDataset();
     final int nr = 10;
     BoxSeries series = new BoxSeries("第一个box");
-    series.add(new double[]{12.0, 45.9, 110.00, 22.05});
+    series.add(new double[]{12.0, 45.9, 40.00, 22.05});
+    BoxSeries series1 = new BoxSeries("第二个box");
+    series1.add(new double[]{10.0, 55.9, 40.00, 69.05,55});
     dataset.addSeries(series);
+    dataset.addSeries(series1);
     return dataset;
   }
 

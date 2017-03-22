@@ -1,5 +1,7 @@
 package org.achartengine.model;
 
+import android.util.Log;
+
 import org.achartengine.util.MathHelper;
 
 import java.io.Serializable;
@@ -40,6 +42,7 @@ public class BoxSeries implements Serializable{
     public Map<String,Double> getStatistics(){
         Map<String,Double> stat = new HashMap<String,Double>();
         stat = MathHelper.getStatistics(this.mValues);
+        System.out.println("怎么越界了，this.mValue---------:"+this.mValues);
         return stat;
     }
 }

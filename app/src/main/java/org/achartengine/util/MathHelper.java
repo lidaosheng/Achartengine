@@ -175,6 +175,7 @@ public class MathHelper {
   public static Map<String,Double> getStatistics(List<Double> arr){
     quickSort(arr);
     int len = arr.size();
+    System.out.println("怎么越界：MathHelper:---------------"+arr.toString());
     double[] stat = new double[3];
     for(int i=1;i<4;i++){
       double w = i*(len+1)/4.0;
@@ -182,6 +183,7 @@ public class MathHelper {
       double y = Math.floor(w);
       //the fraction component of w that was truncated away
       double z = w-y;
+      System.out.println("test:i---------------------"+i);
       stat[i-1] = arr.get((int)y-1)+z*(arr.get((int)y)-arr.get((int)y-1));
     }
     Map<String,Double> statistics = new HashMap<String,Double>();

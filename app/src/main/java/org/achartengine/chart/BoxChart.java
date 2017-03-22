@@ -81,6 +81,7 @@ public class BoxChart extends AbstractChart{
         float yPixelsPerUnit=0;
         //更新上面的minY，maxY等
         for (int i = 0; i < sLength; i++) {
+            System.out.println("-------------------------怎么越界sLenght："+sLength);
             BoxSeries series = mDataset.getSeriesAt(i); //获取第i个series数据
             Map<String,Double> stat = series.getStatistics();
             if (series.getItemCount() == 0) { //如果当前series中没数据，跳过这次循环
@@ -101,7 +102,8 @@ public class BoxChart extends AbstractChart{
             xPixelsPerUnit = (right - left) / (sLength+1); //
         }
         if (maxY - minY != 0) {
-            yPixelsPerUnit = (float) ((bottom - top) / (maxY - minY)); //y轴单位长度对应屏幕长度多少
+            float scaleForY = getScaleForY();
+            yPixelsPerUnit = (float) ((bottom - top) / (scaleForY*(maxY - minY))); //y轴单位长度对应屏幕长度多少
         }
         //---------------------------将统计值转化为屏幕值----------------------------------
         for (int i = 0; i < sLength; i++){
@@ -119,11 +121,11 @@ public class BoxChart extends AbstractChart{
                 float Q1 = (float)stat.get("Q1").doubleValue();
                 float Q2 = (float)stat.get("Q2").doubleValue();
                 float Q3 = (float)stat.get("Q3").doubleValue();
-                float min1 = (float)(bottom - (min-minY)*yPixelsPerUnit);
-                float max1 = (float)(bottom - (max-minY)*yPixelsPerUnit);
-                float Q11 = (float)(bottom - (Q1-minY)*yPixelsPerUnit);
-                float Q21 = (float)(bottom - (Q2-minY)*yPixelsPerUnit);
-                float Q31 = (float)(bottom - (Q3-minY)*yPixelsPerUnit);
+                float min1 = (float)(bottom - (min-0)*yPixelsPerUnit);
+                float max1 = (float)(bottom - (max-0)*yPixelsPerUnit);
+                float Q11 = (float)(bottom - (Q1-0)*yPixelsPerUnit);
+                float Q21 = (float)(bottom - (Q2-0)*yPixelsPerUnit);
+                float Q31 = (float)(bottom - (Q3-0)*yPixelsPerUnit);
                 float startX = left + (i+1) * xPixelsPerUnit ;//box的X点坐标
                 drawSeries(canvas, paint,startX, min1,max1,Q11,Q21,Q31, null, yAxisValue);
                 //sss
@@ -144,7 +146,11 @@ public class BoxChart extends AbstractChart{
         canvas.drawLine(left, bottom, right, bottom, paint);
         paint.setColor(Color.BLUE);
         canvas.drawLine(left, top, left, bottom, paint);
-}
+    }
+    //保证最高的那个box不会填充整个Y,缩放倍数
+    private float getScaleForY() {
+        return 3;
+    }
 
 
     /**
@@ -168,7 +174,9 @@ public class BoxChart extends AbstractChart{
 //        float startX = xMin - seriesNr * halfDiffX + seriesIndex * 2 * halfDiffX; //
 //        drawBox(canvas, startX, yMax, startX + 2 * halfDiffX, yMin, scale, seriesIndex, paint); //(canvas,
         canvas.drawLine(startX-halfDiffX,max,startX+halfDiffX,max,paint); //胡须上
+        canvas.drawLine(startX,max,startX,Q3,paint);
         canvas.drawLine(startX-halfDiffX,min,startX+halfDiffX,min,paint); //胡须下
+        canvas.drawLine(startX,min,startX,Q1,paint);
         canvas.drawRect(startX-halfDiffX, Q3, startX+halfDiffX, Q1, paint); //盒子
         canvas.drawLine(startX-halfDiffX,Q2,startX+halfDiffX,Q2,paint); //中位线
     }
