@@ -28,6 +28,7 @@ import org.achartengine.chart.BarChart.Type;
 import org.achartengine.chart.PointStyle;
 import org.achartengine.chart.TimeChart;
 import org.achartengine.model.BoxMultipleSeriesDataset;
+import org.achartengine.model.BoxSeries;
 import org.achartengine.model.CategorySeries;
 import org.achartengine.model.TimeSeries;
 import org.achartengine.model.XYMultipleSeriesDataset;
@@ -171,6 +172,15 @@ public class GeneratedChartDemo extends ListActivity {
     renderer.setYAxisMax(210);
   }
 
+  private BoxMultipleSeriesDataset getBoxDemoDataset() {
+    BoxMultipleSeriesDataset dataset = new BoxMultipleSeriesDataset();
+    final int nr = 10;
+    BoxSeries series = new BoxSeries("第一个box");
+    series.add(new double[]{12.0, 45.9, 110.00, 22.05});
+    dataset.addSeries(series);
+    return dataset;
+  }
+
   @Override
   protected void onListItemClick(ListView l, View v, int position, long id) {
     super.onListItemClick(l, v, position, id);
@@ -194,7 +204,7 @@ public class GeneratedChartDemo extends ListActivity {
       startActivity(intent);
       break;
       case 4:
-        intent = ChartFactory.getBoxChartIntent(this,new BoxMultipleSeriesDataset(),getDemoRenderer(),"ss");
+        intent = ChartFactory.getBoxChartIntent(this,getBoxDemoDataset(),getDemoRenderer(),"ss");
         startActivity(intent);
 
     }

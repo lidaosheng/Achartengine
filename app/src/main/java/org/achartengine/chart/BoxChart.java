@@ -105,6 +105,7 @@ public class BoxChart extends AbstractChart{
         }
         //---------------------------将统计值转化为屏幕值----------------------------------
         for (int i = 0; i < sLength; i++){
+//            XYMultipleSeriesRenderer seriesRenderer = mRenderer.getSeriesRendererAt(i);
             BoxSeries series = mDataset.getSeriesAt(i);
             if (series.getItemCount() == 0) {
                 continue;
@@ -123,8 +124,8 @@ public class BoxChart extends AbstractChart{
                 float Q11 = (float)(bottom - (Q1-minY)*yPixelsPerUnit);
                 float Q21 = (float)(bottom - (Q2-minY)*yPixelsPerUnit);
                 float Q31 = (float)(bottom - (Q3-minY)*yPixelsPerUnit);
-//                drawSeries(canvas, paint, min,max,Q1,Q2,Q3, seriesRenderer, yAxisValue,seriesIndex,
-//                        startIndex);
+                float startX = left + (i+1) * xPixelsPerUnit ;//box的X点坐标
+                drawSeries(canvas, paint,startX, min1,max1,Q11,Q21,Q31, null, yAxisValue);
                 //sss
 
             }
@@ -151,35 +152,25 @@ public class BoxChart extends AbstractChart{
      * @param paint the paint to be used for drawing
      * @param seriesRenderer the series renderer
      * @param yAxisValue the minimum value of the y axis
-     * @param seriesIndex the index of the series currently being drawn
-     * @param startIndex the start index of the rendering points
      */
-    public void drawSeries(Canvas canvas,Paint paint,float min,float max,float Q1,float Q2,float Q3,
-                           XYMultipleSeriesRenderer seriesRenderer,float yAxisValue,int seriesIndex,
-                           int startIndex) {
-        //number of sample
-        int seriesNr = mDataset.getSeriesCount();
+    public void drawSeries(Canvas canvas,Paint paint,float startX,float min,float max,float Q1,float Q2,float Q3,
+                           XYMultipleSeriesRenderer seriesRenderer,float yAxisValue) {
         paint.setStyle(Style.FILL);
-        BoxSeries series = mDataset.getSeriesAt(seriesIndex);
-//        drawBox(canvas,min,max,Q1,Q2,Q3,yAxisValue, getHalfDiffX(), seriesIndex, paint);
-
-        //
-
-
-
+        drawBox(canvas,startX,min,max,Q1,Q2,Q3,yAxisValue, getHalfDiffX(), paint);
     }
+
     public XYMultipleSeriesRenderer getRenderer() {
         return mRenderer;
     }
 
 
-    private void drawBox(Canvas canvas, float min,float max,float Q1,float Q2,float Q3,int x, float yAxisValue, float halfDiffX, int seriesIndex, Paint paint) {
+    private void drawBox(Canvas canvas,float startX,float min,float max,float Q1,float Q2,float Q3, float yAxisValue, float halfDiffX, Paint paint) {
 //        float startX = xMin - seriesNr * halfDiffX + seriesIndex * 2 * halfDiffX; //
 //        drawBox(canvas, startX, yMax, startX + 2 * halfDiffX, yMin, scale, seriesIndex, paint); //(canvas,
-        canvas.drawLine(x-halfDiffX,max,x+halfDiffX,max,paint); //胡须上
-        canvas.drawLine(x-halfDiffX,min,x+halfDiffX,min,paint); //胡须下
-        canvas.drawRect(x-halfDiffX, Q3, x+halfDiffX, Q1, paint); //盒子
-        canvas.drawLine(x-halfDiffX,Q2,x+halfDiffX,Q2,paint); //中位线
+        canvas.drawLine(startX-halfDiffX,max,startX+halfDiffX,max,paint); //胡须上
+        canvas.drawLine(startX-halfDiffX,min,startX+halfDiffX,min,paint); //胡须下
+        canvas.drawRect(startX-halfDiffX, Q3, startX+halfDiffX, Q1, paint); //盒子
+        canvas.drawLine(startX-halfDiffX,Q2,startX+halfDiffX,Q2,paint); //中位线
     }
 
 
