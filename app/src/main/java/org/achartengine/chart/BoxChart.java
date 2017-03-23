@@ -142,6 +142,7 @@ public class BoxChart extends AbstractChart{
         canvas.drawLine(left, top, left, bottom, paint);
         //绘制刻度和标签
         drawXLabels(canvas,paint,left,bottom,xPixelsPerUnit);
+        drawYLabels(canvas,paint,left,bottom,yPixelsPerUnit, minY,maxY);
 
     }
     //保证最高的那个box不会填充整个Y,缩放倍数
@@ -168,8 +169,6 @@ public class BoxChart extends AbstractChart{
 
 
     private void drawBox(Canvas canvas,float startX,float min,float max,float Q1,float Q2,float Q3, float yAxisValue, float halfDiffX, Paint paint) {
-//        float startX = xMin - seriesNr * halfDiffX + seriesIndex * 2 * halfDiffX; //
-//        drawBox(canvas, startX, yMax, startX + 2 * halfDiffX, yMin, scale, seriesIndex, paint); //(canvas,
         int orginColor = paint.getColor();
         paint.setColor(Color.rgb(164,201,95));
         canvas.drawLine(startX-halfDiffX,max,startX+halfDiffX,max,paint); //胡须上
@@ -216,7 +215,7 @@ public class BoxChart extends AbstractChart{
                     canvas.drawLine(startX, bottom, startX, bottom + mRenderer.getLabelsTextSize() / 3, paint);//刻度长度为text/3=3.3
                 }
                 drawText(canvas, title, startX,
-                        bottom + mRenderer.getLabelsTextSize() * 4 / 3 + mRenderer.getXLabelsPadding(), paint,
+                        bottom + Math.abs(mRenderer.getLabelsTextSize() * 4 / 3 + mRenderer.getXLabelsPadding()), paint,
                         45);
             }
         }
